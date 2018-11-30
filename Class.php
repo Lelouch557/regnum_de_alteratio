@@ -6,7 +6,44 @@ class sql {
         include 'general.config.php';
         $this->db = $db;
     }
-
+    
+    function duplication($table,$limiters){
+        $sql = "SELECT count(*) as num from $table where";
+        for($i=0;$i < count($limmiters); $i++){
+            if($i != (count($limiters)-1)){
+                $sql.=$limiters[$i]." AND ";
+            }else{
+                $sql.=$limiters[$i];
+            }
+        }
+        $query = $this->db->prepare($sql);
+        $query->execute();
+        $return = fetch(PDO::FETCH_ASSOC);
+        if($return[0]["num"] > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    function select($table,$attr,$limiters){
+        $sql = "SELECT ";
+        foreach($attr as $value){
+            $sql.="$value";
+        }
+        $sql.=" from $table where ";
+        for($i=0;$i < count($limmiters); $i++){
+            if($i != (count($limiters)-1)){
+                $sql.=$limiters[$i]." AND ";
+            }else{
+                $sql.=$limiters[$i];
+            }
+        }
+        $sql.=" LIMIT 1";
+        $query = $this->db->prepare($sql);
+        $query->execute();
+        $return = fetch(PDO::FETCH_ASSOC);
+        return $return;
+    }
 
     function insert($table,$attr,$values){
         $sql = "INSERT INTO $table (";
